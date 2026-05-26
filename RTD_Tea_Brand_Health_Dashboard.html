@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTD Tea Brand Health Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(124, 58, 237, 0.2);
+            color: #fff;
+            border-left: 3px solid #7c3aed;
+        }
+
+        .nav-link span.icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title span.icon {
+            margin-right: 10px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed, #f472b6);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.2);
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-subtitle {
+            color: #00d4ff;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Insight Card */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border-left: 4px solid #7c3aed;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+
+        .insight-title {
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 380px;
+        }
+
+        .chart-container-sm {
+            position: relative;
+            height: 280px;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🍵 RTD Tea Dashboard</h1>
+                <p>myInsight 2026</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#executive" class="nav-link active" onclick="showPage('executive')">
+                            <span class="icon">📈</span>
+                            Executive Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#funnel" class="nav-link" onclick="showPage('funnel')">
+                            <span class="icon">🔍</span>
+                            Brand Funnel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#waves" class="nav-link" onclick="showPage('waves')">
+                            <span class="icon">📊</span>
+                            Wave Changes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#imagery" class="nav-link" onclick="showPage('imagery')">
+                            <span class="icon">🎨</span>
+                            Brand Imagery
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#barriers" class="nav-link" onclick="showPage('barriers')">
+                            <span class="icon">🚧</span>
+                            Barriers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#channels" class="nav-link" onclick="showPage('channels')">
+                            <span class="icon">📺</span>
+                            Media & Channels
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#frequency" class="nav-link" onclick="showPage('frequency')">
+                            <span class="icon">⏰</span>
+                            Usage Frequency
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Executive Overview Page -->
+            <div id="page-executive" class="page">
+                <div class="page-header">
+                    <h2>📈 Executive Overview</h2>
+                    <p>Tổng quan thị trường RTD Tea Việt Nam · 2,600 người dùng · 2024–2025</p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-value">2,600</div>
+                        <div class="kpi-label">Tổng mẫu</div>
+                        <div class="kpi-subtitle">1,300 mỗi wave</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">4</div>
+                        <div class="kpi-label">Khu vực</div>
+                        <div class="kpi-subtitle">Bắc · Nam · Trung · MK</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">61%</div>
+                        <div class="kpi-label">Giới tính</div>
+                        <div class="kpi-subtitle">Nữ · 39% Nam</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">14–40</div>
+                        <div class="kpi-label">Độ tuổi chính</div>
+                        <div class="kpi-subtitle">Đỉnh: 30–34 tuổi</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">7.5–30M</div>
+                        <div class="kpi-label">Thu nhập chính</div>
+                        <div class="kpi-subtitle">VND/tháng (~87%)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">32.2%</div>
+                        <div class="kpi-label">Thị trường dẫn đầu</div>
+                        <div class="kpi-subtitle">C2 (BUMO)</div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">📊</span> Brand Funnel Toàn Cảnh (%)</h3>
+                    <div class="legend">
+                        <span class="legend-item"><span class="legend-dot" style="background:#5DCAA5"></span>TOM</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Spontaneous</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#AFA9EC"></span>Aided</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#7F77DD"></span>P3M usage</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#534AB7"></span>P4W usage</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#FAC775"></span>BUMO</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#EF9F27"></span>Consideration</span>
+                    </div>
+                    <div class="chart-container" style="height: 450px">
+                        <canvas id="funnelChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="insight-card">
+                        <div class="insight-title">🔥 Thị trường dẫn đầu</div>
+                        <div class="insight-text">C2 dẫn đầu với 32.2% BUMO và 97.2% Aided Awareness</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-title">⚠️ Thách thức của Cozy</div>
+                        <div class="insight-text">91.8% Awareness nhưng chỉ 8.8% BUMO - tỷ lệ chuyển đổi thấp</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-title">📈 Cơ hội tăng trưởng</div>
+                        <div class="insight-text">OLong Tea+ có hiệu suất mạnh với 29.4% BUMO</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Funnel Page -->
+            <div id="page-funnel" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>🔍 Brand Funnel Analysis</h2>
+                    <p>Phân tích hiệu suất thương hiệu từ nhận biết đến trung thành</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">📊</span> Brand Funnel Toàn Cảnh (%)</h3>
+                    <div class="chart-container" style="height: 450px">
+                        <canvas id="funnelChart2"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">🍵</span> Cozy Funnel</h3>
+                        <div class="chart-container-sm">
+                            <canvas id="cozyFunnelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">📉</span> Cozy Conversion</h3>
+                        <div class="chart-container-sm">
+                            <canvas id="cozyConversionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">⚠️</span> Phát hiện chính cho Cozy</h3>
+                    <div class="grid-2">
+                        <div class="insight-card">
+                            <div class="insight-title">✅ Điểm mạnh: Nhận biết cao</div>
+                            <div class="insight-text">Cozy có 91.8% Aided Awareness, cho thấy nhận biết thương hiệu tốt</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">❌ Điểm yếu: Tỷ lệ chuyển đổi thấp</div>
+                            <div class="insight-text">Sự sụt giảm đáng kể từ 91.8% Awareness xuống chỉ 8.8% BUMO</div>
+                        </div>
+                    </div>
+                    <div class="insight-card" style="margin-top: 16px;">
+                        <div class="insight-title">🎯 Cơ hội chính</div>
+                        <div class="insight-text">Tập trung chuyển đổi người dùng đã nhận biết thành người dùng thử - xác định và giải quyết rào cản ngăn cản việc dùng thử</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wave Changes Page -->
+            <div id="page-waves" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>📊 Thay đổi theo Wave</h2>
+                    <p>So sánh hiệu suất 2024 → 2025</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">📈</span> P3M Usage Change 2024 → 2025</h3>
+                        <div class="chart-container-sm">
+                            <canvas id="waveP3m"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">📈</span> P4W Usage Change 2024 → 2025</h3>
+                        <div class="chart-container-sm">
+                            <canvas id="waveP4w"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">💡</span> Insights về thay đổi Wave</h3>
+                    <div class="grid-3">
+                        <div class="insight-card">
+                            <div class="insight-title">📈 Cozy tăng trưởng mạnh</div>
+                            <div class="insight-text">P3M tăng từ 30.6% → 35.8%, P4W từ 23.8% → 27.8%</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">↔️ OLong Tea+ ổn định</div>
+                            <div class="insight-text">Duy trì mức sử dụng cao qua các wave</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">📈 Dr. Thanh cải thiện</div>
+                            <div class="insight-text">P3M tăng từ 8.2% → 11.7%, P4W từ 4.1% → 6.8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Imagery Page -->
+            <div id="page-imagery" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>🎨 Brand Imagery & Perception</h2>
+                    <p>% người dùng liên kết thuộc tính với thương hiệu</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">🎯</span> Brand Imagery Radar</h3>
+                    <div class="chart-container" style="height: 420px">
+                        <canvas id="imageryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">🔍</span> Hồ sơ cảm nhận của Cozy</h3>
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="margin-bottom: 16px; color: #00d4ff;">💪 Điểm mạnh</h4>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 3px solid #00d4ff;">
+                                <strong>Tin cậy</strong>: 51%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 3px solid #00d4ff;">
+                                <strong>Tự nhiên</strong>: 51%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 3px solid #00d4ff;">
+                                <strong>Phổ biến</strong>: 50%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(0, 212, 255, 0.1); border-radius: 8px; border-left: 3px solid #00d4ff;">
+                                <strong>Healthy</strong>: 47%
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 16px; color: #ff6b6b;">🚩 Cần cải thiện</h4>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(255, 107, 107, 0.1); border-radius: 8px; border-left: 3px solid #ff6b6b;">
+                                <strong>Vị ngon</strong>: 31%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(255, 107, 107, 0.1); border-radius: 8px; border-left: 3px solid #ff6b6b;">
+                                <strong>Hằng ngày</strong>: 32%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(255, 107, 107, 0.1); border-radius: 8px; border-left: 3px solid #ff6b6b;">
+                                <strong>Hiện đại</strong>: 34%
+                            </div>
+                            <div style="padding: 8px 12px; margin: 4px 0; background: rgba(255, 107, 107, 0.1); border-radius: 8px; border-left: 3px solid #ff6b6b;">
+                                <strong>Sảng khoái</strong>: 37%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barriers Page -->
+            <div id="page-barriers" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>🚧 Barrier Analysis</h2>
+                    <p>Rào cản không cân nhắc mua (%)</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">⚠️</span> Rào cản cho Top 5 thương hiệu</h3>
+                    <div class="chart-container">
+                        <canvas id="barrierChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">🔴</span> Rào cản nghiêm trọng của Cozy</h3>
+                    <div class="grid-2">
+                        <div class="insight-card">
+                            <div class="insight-title">🍵 #1 Vấn đề: Không thích vị</div>
+                            <div class="insight-text">19.5% người dùng nêu vấn đề về hương vị - rào cản lớn nhất</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">👅 #2 Vấn đề: Không đủ hương vị</div>
+                            <div class="insight-text">11.9% người dùng cho rằng không đủ lựa chọn hương vị</div>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="insight-card">
+                            <div class="insight-title">📍 Vấn đề phân phối</div>
+                            <div class="insight-text">5.5% cho rằng không có ở cửa hàng, 5.3% nói không lạnh sẵn</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">💰 Vấn đề giá</div>
+                            <div class="insight-text">3.8% cho rằng đắt hơn kỳ vọng, 3.3% lo về nhiều đường</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media & Channels Page -->
+            <div id="page-channels" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>📺 Media & Purchase Channels</h2>
+                    <p>Kênh tiếp cận & điểm mua hàng cuối</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">📱</span> Media Touchpoint (%)</h3>
+                        <div class="chart-container">
+                            <canvas id="mediaChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 class="card-title"><span class="icon">🏪</span> Điểm mua hàng cuối (Cozy vs đối thủ)</h3>
+                        <div class="chart-container">
+                            <canvas id="purchaseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">💡</span> Insights về Channels</h3>
+                    <div class="grid-3">
+                        <div class="insight-card">
+                            <div class="insight-title">🏪 In-store display mạnh nhất</div>
+                            <div class="insight-text">62-72% người dùng thấy thương hiệu tại in-store display</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">👁️ Seeing others hiệu quả</div>
+                            <div class="insight-text">37.5-50.9% người dùng thấy người khác dùng</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">🛒 Tạp hóa là kênh mua chính</div>
+                            <div class="insight-text">62.9-69.3% người dùng mua tại tạp hóa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Frequency Page -->
+            <div id="page-frequency" class="page" style="display: none;">
+                <div class="page-header">
+                    <h2>⏰ Usage Frequency</h2>
+                    <p>Tần suất sử dụng · % người dùng P4W</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">📊</span> Tần suất sử dụng giữa các thương hiệu</h3>
+                    <div class="chart-container">
+                        <canvas id="freqChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title"><span class="icon">💡</span> Insights về tần suất</h3>
+                    <div class="grid-3">
+                        <div class="insight-card">
+                            <div class="insight-title">📈 C2 & OLong Tea+ có tần suất cao</div>
+                            <div class="insight-text">Tỷ lệ dùng 2-3/tuần và hàng ngày cao hơn các thương hiệu khác</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">⚠️ Cozy tập trung ở tần suất thấp</div>
+                            <div class="insight-text">44.4% dùng 2-3/tháng hoặc ít hơn, chỉ 5.6% dùng hàng ngày</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-title">📉 Dr. Thanh có nhiều người dùng không thường xuyên</div>
+                            <div class="insight-text">33.3% chỉ dùng 1 lần/tháng</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const brands8 = ['C2','Không Độ','Cozy','Dr. Thanh','OLong Tea+','Trà Tea Go','Búp non 365','TH True Tea'];
+        const brands5 = ['C2','Không Độ','Cozy','Dr. Thanh','OLong Tea+'];
+        const brandsWave = ['C2','Không Độ','Cozy','OTP','Dr. Thanh','Búp 365','TH Tea'];
+        
+        const brandColors = {
+            'C2': '#378ADD',
+            'Không Độ': '#1D9E75', 
+            'Cozy': '#D4537E',
+            'Dr. Thanh': '#BA7517',
+            'OLong Tea+': '#7F77DD',
+            'Trà Tea Go': '#E24B4A',
+            'Búp non 365': '#639922',
+            'TH True Tea': '#73726c',
+            'OTP': '#7F77DD',
+            'Búp 365': '#639922',
+            'TH Tea': '#73726c'
+        };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).style.display = 'block';
+            event.target.classList.add('active');
+            setTimeout(initCharts, 100);
+        }
+
+        function initCharts() {
+            // --- Executive Overview ---
+            const funnelCtx = document.getElementById('funnelChart');
+            if (funnelCtx && !funnelCtx.chart) {
+                funnelCtx.chart = new Chart(funnelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: brands8,
+                        datasets: [
+                            { label: 'TOM', data: [35.8,22.4,8.7,0.7,27.9,0.1,1.1,1.2], backgroundColor: '#5DCAA5', borderRadius: 2 },
+                            { label: 'Spontaneous', data: [78.9,54.2,39.6,4.9,75.7,1.0,3.9,5.4], backgroundColor: '#1D9E75', borderRadius: 2 },
+                            { label: 'Aided', data: [97.2,92.5,91.8,73.1,98.8,38.7,39.7,49.8], backgroundColor: '#AFA9EC', borderRadius: 2 },
+                            { label: 'P3M', data: [66.0,47.5,33.2,9.9,66.8,4.7,5.3,8.8], backgroundColor: '#7F77DD', borderRadius: 2 },
+                            { label: 'P4W', data: [57.6,37.3,25.8,5.4,54.0,2.3,3.7,5.8], backgroundColor: '#534AB7', borderRadius: 2 },
+                            { label: 'BUMO', data: [32.2,20.8,8.8,1.3,29.4,0.3,1.4,1.7], backgroundColor: '#FAC775', borderRadius: 2 },
+                            { label: 'Consideration', data: [75.8,61.2,34.7,16.3,74.8,9.2,14.3,17.8], backgroundColor: '#EF9F27', borderRadius: 2 },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { font: { size: 11 }, color: '#94a3b8', autoSkip: false, maxRotation: 20 }, grid: { display: false } },
+                            y: { ticks: { font: { size: 11 }, color: '#94a3b8', callback: v => v + '%' }, grid: { color: 'rgba(128,128,128,.12)' }, max: 110 }
+                        }
+                    }
+                });
+            }
+
+            // --- Brand Funnel Page ---
+            const funnelCtx2 = document.getElementById('funnelChart2');
+            if (funnelCtx2 && !funnelCtx2.chart) {
+                funnelCtx2.chart = new Chart(funnelCtx2, {
+                    type: 'bar',
+                    data: {
+                        labels: brands8,
+                        datasets: [
+                            { label: 'TOM', data: [35.8,22.4,8.7,0.7,27.9,0.1,1.1,1.2], backgroundColor: '#5DCAA5', borderRadius: 2 },
+                            { label: 'Spontaneous', data: [78.9,54.2,39.6,4.9,75.7,1.0,3.9,5.4], backgroundColor: '#1D9E75', borderRadius: 2 },
+                            { label: 'Aided', data: [97.2,92.5,91.8,73.1,98.8,38.7,39.7,49.8], backgroundColor: '#AFA9EC', borderRadius: 2 },
+                            { label: 'P3M', data: [66.0,47.5,33.2,9.9,66.8,4.7,5.3,8.8], backgroundColor: '#7F77DD', borderRadius: 2 },
+                            { label: 'P4W', data: [57.6,37.3,25.8,5.4,54.0,2.3,3.7,5.8], backgroundColor: '#534AB7', borderRadius: 2 },
+                            { label: 'BUMO', data: [32.2,20.8,8.8,1.3,29.4,0.3,1.4,1.7], backgroundColor: '#FAC775', borderRadius: 2 },
+                            { label: 'Consideration', data: [75.8,61.2,34.7,16.3,74.8,9.2,14.3,17.8], backgroundColor: '#EF9F27', borderRadius: 2 },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 11 }, color: '#94a3b8', autoSkip: false, maxRotation: 20 }, grid: { display: false } },
+                            y: { ticks: { font: { size: 11 }, color: '#94a3b8', callback: v => v + '%' }, grid: { color: 'rgba(128,128,128,.12)' }, max: 110 }
+                        }
+                    }
+                });
+            }
+
+            const cozyFunnelCtx = document.getElementById('cozyFunnelChart');
+            if (cozyFunnelCtx && !cozyFunnelCtx.chart) {
+                cozyFunnelCtx.chart = new Chart(cozyFunnelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['TOM', 'Spontaneous', 'Aided', 'Consideration', 'P3M', 'P4W', 'BUMO'],
+                        datasets: [{
+                            label: 'Cozy',
+                            data: [8.7, 39.6, 91.8, 34.7, 33.2, 25.8, 8.8],
+                            backgroundColor: ['#5DCAA5', '#1D9E75', '#AFA9EC', '#EF9F27', '#7F77DD', '#534AB7', '#FAC775'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            const cozyConversionCtx = document.getElementById('cozyConversionChart');
+            if (cozyConversionCtx && !cozyConversionCtx.chart) {
+                cozyConversionCtx.chart = new Chart(cozyConversionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['TOM→Spont', 'Spont→Aided', 'Aided→Consid', 'Consid→P3M', 'P3M→P4W', 'P4W→BUMO'],
+                        datasets: [{
+                            label: 'Conversion %',
+                            data: [455, 232, 38, 96, 78, 34],
+                            backgroundColor: '#D4537E',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { ticks: { color: '#94a3b8', maxRotation: 45 }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // --- Wave Changes ---
+            const waveP3mCtx = document.getElementById('waveP3m');
+            if (waveP3mCtx && !waveP3mCtx.chart) {
+                waveP3mCtx.chart = new Chart(waveP3mCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: brandsWave,
+                        datasets: [
+                            { label: '2024', data: [65.6,46.4,30.6,66.8,8.2,3.8,7.6], backgroundColor: '#B5D4F4', borderRadius: 2 },
+                            { label: '2025', data: [66.5,48.6,35.8,66.8,11.7,6.7,10.1], backgroundColor: '#378ADD', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 10 }, color: '#94a3b8', autoSkip: false, maxRotation: 30 }, grid: { display: false } },
+                            y: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 80 }
+                        }
+                    }
+                });
+            }
+
+            const waveP4wCtx = document.getElementById('waveP4w');
+            if (waveP4wCtx && !waveP4wCtx.chart) {
+                waveP4wCtx.chart = new Chart(waveP4wCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: brandsWave,
+                        datasets: [
+                            { label: '2024', data: [56.8,36.0,23.8,54.2,4.1,2.8,4.4], backgroundColor: '#9FE1CB', borderRadius: 2 },
+                            { label: '2025', data: [58.4,38.5,27.8,53.8,6.8,4.5,7.2], backgroundColor: '#0F6E56', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 10 }, color: '#94a3b8', autoSkip: false, maxRotation: 30 }, grid: { display: false } },
+                            y: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 70 }
+                        }
+                    }
+                });
+            }
+
+            // --- Brand Imagery ---
+            const imageryCtx = document.getElementById('imageryChart');
+            if (imageryCtx && !imageryCtx.chart) {
+                imageryCtx.chart = new Chart(imageryCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Phổ biến','Bao bì đẹp','Tin cậy','Giá hợp lý','Hằng ngày','Giải khát','Vị ngon','Hiện đại','Tự nhiên','Healthy','Sảng khoái','Tươi mát'],
+                        datasets: [
+                            { label: 'C2', data: [82,71,75,69,62,75,65,74,73,64,68,69], borderColor: '#378ADD', backgroundColor: 'rgba(55,138,221,.08)', pointRadius: 3, borderWidth: 2 },
+                            { label: 'OLong Tea+', data: [88,67,80,72,66,79,67,69,82,71,74,75], borderColor: '#7F77DD', backgroundColor: 'rgba(127,119,221,.08)', pointRadius: 3, borderWidth: 2 },
+                            { label: 'Cozy', data: [50,44,51,39,32,44,31,34,51,47,37,42], borderColor: '#D4537E', backgroundColor: 'rgba(212,83,126,.08)', pointRadius: 3, borderWidth: 2, borderDash: [4,3] },
+                            { label: 'Dr. Thanh', data: [27,20,30,21,16,27,14,17,30,20,17,17], borderColor: '#BA7517', backgroundColor: 'rgba(186,117,23,.05)', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } },
+                        scales: { r: { ticks: { display: false }, grid: { color: 'rgba(128,128,128,.15)' }, pointLabels: { font: { size: 10 }, color: '#94a3b8' } } }
+                    }
+                });
+            }
+
+            // --- Barriers ---
+            const barrierCtx = document.getElementById('barrierChart');
+            if (barrierCtx && !barrierCtx.chart) {
+                barrierCtx.chart = new Chart(barrierCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Không thích vị','Không đủ hương vị','Không có ở cửa hàng','Không lạnh sẵn','Đắt hơn kỳ vọng','Nhiều đường'],
+                        datasets: [
+                            { label: 'C2', data: [3.8,4.1,2.0,2.3,1.4,2.8], backgroundColor: '#378ADD', borderRadius: 2 },
+                            { label: 'Không Độ', data: [4.4,6.2,5.0,4.2,3.8,1.6], backgroundColor: '#1D9E75', borderRadius: 2 },
+                            { label: 'Cozy', data: [19.5,11.9,5.5,5.3,3.8,3.3], backgroundColor: '#D4537E', borderRadius: 2 },
+                            { label: 'Dr. Thanh', data: [12.8,9.0,4.6,5.3,2.0,7.3], backgroundColor: '#BA7517', borderRadius: 2 },
+                            { label: 'OLong Tea+', data: [3.8,4.2,2.6,3.8,1.6,2.4], backgroundColor: '#7F77DD', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: { legend: { position: 'top', labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 25 },
+                            y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // --- Media & Channels ---
+            const mediaCtx = document.getElementById('mediaChart');
+            if (mediaCtx && !mediaCtx.chart) {
+                mediaCtx.chart = new Chart(mediaCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['TV','Internet','Billboard','In-store\ndisplay','Promo\nin-store','WOM','Seeing\nothers'],
+                        datasets: [
+                            { label: 'C2', data: [31.5,18.5,7.9,71.1,8.7,32.2,50.9], backgroundColor: '#378ADD', borderRadius: 2 },
+                            { label: 'Không Độ', data: [24.3,14.0,5.4,67.5,7.7,25.7,40.7], backgroundColor: '#1D9E75', borderRadius: 2 },
+                            { label: 'Cozy', data: [23.6,11.2,6.2,62.0,5.0,20.6,37.5], backgroundColor: '#D4537E', borderRadius: 2 },
+                            { label: 'OLong Tea+', data: [34.1,20.0,8.9,72.4,7.1,31.5,49.5], backgroundColor: '#7F77DD', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 9 }, color: '#94a3b8', autoSkip: false, maxRotation: 30 }, grid: { display: false } },
+                            y: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 85 }
+                        }
+                    }
+                });
+            }
+
+            const purchaseCtx = document.getElementById('purchaseChart');
+            if (purchaseCtx && !purchaseCtx.chart) {
+                purchaseCtx.chart = new Chart(purchaseCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tạp hoá','CVS','Quận\nđường','Siêu thị','Nhà hàng'],
+                        datasets: [
+                            { label: 'C2', data: [67.6,9.5,8.6,7.9,1.8], backgroundColor: '#378ADD', borderRadius: 2 },
+                            { label: 'Không Độ', data: [63.7,12.5,10.6,8.0,1.9], backgroundColor: '#1D9E75', borderRadius: 2 },
+                            { label: 'Cozy', data: [62.9,8.5,13.6,10.1,1.5], backgroundColor: '#D4537E', borderRadius: 2 },
+                            { label: 'OLong Tea+', data: [69.3,7.7,11.3,6.7,0.9], backgroundColor: '#7F77DD', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 9 }, color: '#94a3b8', autoSkip: false }, grid: { display: false } },
+                            y: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 80 }
+                        }
+                    }
+                });
+            }
+
+            // --- Usage Frequency ---
+            const freqCtx = document.getElementById('freqChart');
+            if (freqCtx && !freqCtx.chart) {
+                freqCtx.chart = new Chart(freqCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Once/month','2-3/month','Once/week','2-3/week','4-6/week','Daily'],
+                        datasets: [
+                            { label: 'C2', data: [10.9,25.7,23.4,27.6,7.3,3.1], backgroundColor: '#378ADD', borderRadius: 2 },
+                            { label: 'Cozy', data: [16.2,28.2,23.7,23.0,3.4,2.2], backgroundColor: '#D4537E', borderRadius: 2 },
+                            { label: 'OLong Tea+', data: [10.7,24.5,26.0,26.4,6.3,4.5], backgroundColor: '#7F77DD', borderRadius: 2 },
+                            { label: 'Dr. Thanh', data: [33.3,26.2,21.3,9.2,3.5,0.7], backgroundColor: '#BA7517', borderRadius: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { color: '#f8fafc' } } },
+                        scales: {
+                            x: { ticks: { font: { size: 10 }, color: '#94a3b8', autoSkip: false, maxRotation: 20 }, grid: { display: false } },
+                            y: { ticks: { callback: v => v + '%', color: '#94a3b8' }, grid: { color: 'rgba(128,128,128,.1)' }, max: 40 }
+                        }
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('load', initCharts);
+    </script>
+</body>
+</html>
