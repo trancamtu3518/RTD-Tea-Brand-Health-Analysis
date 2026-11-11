@@ -21,12 +21,11 @@ Evaluating a comprehensive dataset of **2,600+ Vietnamese consumers**, this proj
 
 ## 📊 Dashboard & Visual Showcase
 
-<!-- 💡 HƯỚNG DẪN: Chụp 1-2 bức ảnh đẹp của file HTML Dashboard hoặc slide PPTX rồi kéo thả vào đây -->
-> Below is a preview of the interactive dashboard built with Chart.js:
+> Interactive dashboard preview showcasing core brand health metrics, funnel diagnosis, and barrier analysis:
 
-| Brand Health Funnel & Metrics | Market Share & Conversion Bottlenecks |
+| Executive Overview & Brand Funnel | Barrier & Conversion Bottleneck Analysis |
 | :---: | :---: |
-| *(Chèn ảnh chụp Dashboard 1 tại đây)* | *(Chèn ảnh chụp Dashboard 2 tại đây)* |
+| ![Brand Health Funnel Overview](assets/brand_health_funnel_overview.png) | ![Barrier & Conversion Bottleneck Analysis](assets/barrier_and_conversion_bottleneck.png) |
 
 ---
 
@@ -41,8 +40,10 @@ Evaluating a comprehensive dataset of **2,600+ Vietnamese consumers**, this proj
 ## 📁 Repository Structure
 
 ```text
+├── assets/                                   # Dashboard visual showcases and preview screenshots
 ├── Statistical_Testing_RTD_Tea_Market.ipynb  # Core ETL, Data Cleaning & Statistical Hypothesis Testing
 ├── RTD_Tea_Brand_Health_Dashboard.html       # Standalone interactive dashboard (HTML5, CSS3, Chart.js)
+├── index.html                                # Web deployment entrypoint for GitHub Pages demo
 ├── Report_Brand_Health_RTD_Tea_Market.pptx   # Executive presentation & 3-phase strategic roadmap
 ├── data/                                     # Survey dataset & processed tabular data
 └── README.md                                 # Documentation & Project Overview
@@ -61,7 +62,7 @@ Evaluating a comprehensive dataset of **2,600+ Vietnamese consumers**, this proj
 
 ## 🚀 How to Experience This Project
 
-1. **Interactive Dashboard:** Download and open `RTD_Tea_Brand_Health_Dashboard.html` directly in any web browser (Chrome, Edge, Safari) to interact with the visualizations.
+1. **Interactive Dashboard:** Open `RTD_Tea_Brand_Health_Dashboard.html` (or `index.html`) directly in any web browser (Chrome, Edge, Safari) to interact with the visualizations. *(Or access the live GitHub Pages link once activated)*.
 2. **Executive Report:** Review `Report_Brand_Health_RTD_Tea_Market.pptx` for the complete business narrative and strategic recommendations.
 3. **Code & Statistical Analysis:** Open `Statistical_Testing_RTD_Tea_Market.ipynb` via GitHub preview or Jupyter/Google Colab to inspect data cleaning, transformation, and statistical tests.
 
