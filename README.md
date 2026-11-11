@@ -1,35 +1,77 @@
-# Phân Tích Sức Khỏe Thương Hiệu Thị Trường Trà Uống Liền (RTD Tea) 🍵📊
+# 🍵 Ready-To-Drink (RTD) Tea Brand Health Analysis & Strategic Growth Framework
 
-Đây là dự án cá nhân được thực hiện nhằm đo lường và đánh giá sức khỏe thương hiệu (Brand Health) của các nhãn hàng trong thị trường Trà uống liền tại Việt Nam (như Cozy, C2, OLong Tea+, Dr.Thanh,...).
+[![Competition](https://img.shields.io/badge/Competition-Top%2020%20MyInsight%20Finalist-gold?style=for-the-badge&logo=target)](https://github.com/trancamtu3518)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Visualization](https://img.shields.io/badge/Interactive%20Dashboard-HTML%2FCSS%2FChart.js-orange?style=for-the-badge)](https://github.com/trancamtu3518)
 
-Dự án tập trung mạnh vào kỹ năng **Data Storytelling** và phân tích chuyên sâu dưới góc độ kinh doanh để đưa ra các giải pháp đột phá thị phần, bám sát các yêu cầu thực tế của một Business Analyst / Data Analyst.
-
-## 📁 Cấu trúc Repository
-
-Dự án bao gồm 3 thành phần chính phục vụ cho quá trình phân tích, trực quan hóa và báo cáo:
-
-* **`Statistical_Testing_RTD_Tea_Market.ipynb`**: File source code (Jupyter Notebook). Chứa toàn bộ logic xử lý dữ liệu, làm sạch và thực hiện các kiểm định thống kê (Statistical Hypothesis Testing) để tìm ra các insight có ý nghĩa từ tập dữ liệu khảo sát.
-* **`RTD_Tea_Brand_Health_Dashboard.html`**: Dashboard tương tác trực quan. Được xây dựng độc lập bằng HTML/CSS và Chart.js để theo dõi các chỉ số sức khỏe thương hiệu cốt lõi, giúp người xem dễ dàng nắm bắt biến động thị trường.
-* **`Report_Brand_Health_RTD_Tea_Market.pptx`**: Báo cáo tổng kết. Bản thuyết trình chi tiết hóa các insight tìm được thành câu chuyện dữ liệu, đồng thời đề xuất chiến lược hành động 3 giai đoạn để bứt phá doanh thu.
-
-## 🛠️ Công nghệ & Kỹ năng ứng dụng
-
-* **Ngôn ngữ & Thư viện**: Python (Pandas, NumPy, Matplotlib, Seaborn)
-* **Trực quan hóa**: HTML/CSS/JS (Chart.js)
-* **Môi trường**: Jupyter Notebook / Google Colab
-* **Kỹ năng cốt lõi**: Data Storytelling, Business Analysis, Thống kê ứng dụng
-
-## 🚀 Hướng dẫn trải nghiệm
-
-1.  **Xem Báo Cáo**: Tải file `.pptx` để xem trực tiếp câu chuyện dữ liệu và chiến lược đề xuất.
-2.  **Trải nghiệm Dashboard**: Mở trực tiếp file `.html` bằng bất kỳ trình duyệt web nào (Chrome, Edge, Safari...) để xem biểu đồ tương tác.
-3.  **Kiểm tra Source Code**: Xem file `.ipynb` trên GitHub hoặc mở bằng Google Colab / VS Code để kiểm tra chi tiết các bước xử lý dữ liệu.
-
-## 👩‍💻 Thông tin tác giả
-
-* **Trần Cẩm Tú**
-* Sinh viên chuyên ngành Khoa học Dữ liệu (Data Science) - Trường Đại học Công Thương TP.HCM (HUIT).
-* Định hướng phát triển: Business Analyst / Data Analyst.
+> **Project Origin:** Originally developed as a competing solution that achieved **Top 20 Finalist at the MyInsight Data Analytics Competition**, this repository represents an end-to-end **remade, enriched, and production-ready analytics framework** focusing on Data Storytelling, Statistical Rigor, and Actionable Business Strategy.
 
 ---
-*Nếu bạn thấy dự án cá nhân này thú vị và hữu ích, hãy để lại 1 ⭐ ủng hộ mình nhé!*
+
+## 📌 Executive Summary & Key Business Insights
+
+Evaluating a comprehensive dataset of **2,600+ Vietnamese consumers**, this project diagnoses brand health metrics (TOM, Spontaneous Awareness, Consideration, Trial, Regular Usage) across major players in the Ready-To-Drink (RTD) Tea industry (*C2, OLong Tea+, Cozy, Dr.Thanh, etc.*).
+
+### 🔍 Critical Findings:
+* **Polarized Duopoly:** The market exhibits a heavy *"winner-takes-most"* dynamic dominated by C2 and OLong Tea+, capturing over 65% of the consideration set.
+* **The 19.5% Conversion Bottleneck:** Funnel & barrier analysis revealed that for a key challenger brand, the drop-off from *Trial to Regular Consumption* was primarily driven by **taste dissatisfaction (19.5%)**—nearly **5x higher** than industry competitors.
+* **Strategic Takeaway:** The core growth inhibitor was **product experience & flavor formulation**, not brand awareness or marketing reach.
+
+---
+
+## 📊 Dashboard & Visual Showcase
+
+<!-- 💡 HƯỚNG DẪN: Chụp 1-2 bức ảnh đẹp của file HTML Dashboard hoặc slide PPTX rồi kéo thả vào đây -->
+> Below is a preview of the interactive dashboard built with Chart.js:
+
+| Brand Health Funnel & Metrics | Market Share & Conversion Bottlenecks |
+| :---: | :---: |
+| *(Chèn ảnh chụp Dashboard 1 tại đây)* | *(Chèn ảnh chụp Dashboard 2 tại đây)* |
+
+---
+
+## 💡 Proposed 3-Phase Strategic Action Plan
+
+1. **Phase 1 – Core Product Optimization (Months 1–3):** Reformulate flavor profile and reduce sweetness variance based on consumer sensory feedback; resolve the 19.5% trial barrier.
+2. **Phase 2 – Channel Expansion (Months 4–8):** Penetrate modern on-premise channels (HoReCa, universities, convenience store combos) to intercept high-frequency trial occasions.
+3. **Phase 3 – Healthy-Living Repositioning (Months 9–12):** Capitalize on zero-sugar / low-calorie trends to establish a distinctive positioning against traditional RTD competitors.
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── Statistical_Testing_RTD_Tea_Market.ipynb  # Core ETL, Data Cleaning & Statistical Hypothesis Testing
+├── RTD_Tea_Brand_Health_Dashboard.html       # Standalone interactive dashboard (HTML5, CSS3, Chart.js)
+├── Report_Brand_Health_RTD_Tea_Market.pptx   # Executive presentation & 3-phase strategic roadmap
+├── data/                                     # Survey dataset & processed tabular data
+└── README.md                                 # Documentation & Project Overview
+```
+
+---
+
+## 🛠️ Technical Stack & Methodologies
+
+* **Data Processing & Analytics:** Python (`pandas`, `numpy`, `scipy.stats`)
+* **Statistical Testing:** Chi-square Test of Independence, ANOVA, Proportion Z-Test
+* **Front-End Visualization:** Standalone `HTML5`, `CSS3`, `Chart.js` for interactive UI/UX
+* **Business Frameworks:** Brand Health Funnel (Awareness > Consideration > Trial > Loyalty), Barrier Analysis, Market Penetration Index
+
+---
+
+## 🚀 How to Experience This Project
+
+1. **Interactive Dashboard:** Download and open `RTD_Tea_Brand_Health_Dashboard.html` directly in any web browser (Chrome, Edge, Safari) to interact with the visualizations.
+2. **Executive Report:** Review `Report_Brand_Health_RTD_Tea_Market.pptx` for the complete business narrative and strategic recommendations.
+3. **Code & Statistical Analysis:** Open `Statistical_Testing_RTD_Tea_Market.ipynb` via GitHub preview or Jupyter/Google Colab to inspect data cleaning, transformation, and statistical tests.
+
+---
+
+## 👩‍💻 Author
+
+**Tran Cam Tu**  
+*Final-Year Data Science Student @ Ho Chi Minh City University of Industry and Trade (HUIT)*  
+* Career Focus: **Data Analyst / Business Analyst**  
+* ✉️ Email: trancamtu3518@gmail.com  
+* 🔗 LinkedIn: [linkedin.com/in/trancamtu3518](https://linkedin.com)  
+* 📂 GitHub: [github.com/trancamtu3518](https://github.com/trancamtu3518)
